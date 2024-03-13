@@ -7,7 +7,7 @@ module.exports = {
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Contact', link: '/contact/contact.md' },
-      { text: 'GitHub', link: 'https://github.com/davidebolo1993/vuepress_doc_template' }
+      { text: 'GitHub', link: 'https://github.com/davidebolo1993/cosigt' }
     ],
     sidebar: [
       '/introduction/introduction.md',

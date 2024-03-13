@@ -2,7 +2,7 @@
 
 # abort on errors
 set -e
-#export NODE_OPTIONS=--openssl-legacy-provider
+export NODE_OPTIONS=--openssl-legacy-provider
 
 # build
 npm run docs:build
@@ -21,6 +21,6 @@ git commit -m 'deploy'
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git master
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f https://github.com/davidebolo1993/vuepress_doc_template.git master:gh-pages
+git push -f https://github.com/davidebolo1993/cosigtdoc.git master:gh-pages
 cd -
 

@@ -1,6 +1,6 @@
 module.exports = {
-  title: 'Template',
-  base: '/vuepress_doc_template/',
+  title: 'Cosigt documentation',
+  base: '/cosigtdoc/',
   theme: 'vt',
   themeConfig: {
     enableDarkMode: true,
@@ -12,6 +12,8 @@ module.exports = {
     sidebar: [
       '/introduction/introduction.md',
       '/setup/setup.md',
+      '/usage/usage.md',
+      '/usecases/usecases.md',
       '/contact/contact.md'
     ],
   }

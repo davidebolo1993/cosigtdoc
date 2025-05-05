@@ -2,7 +2,7 @@
 
 # abort on errors
 set -e
-#export NODE_OPTIONS=--openssl-legacy-provider
+export NODE_OPTIONS=--openssl-legacy-provider
 
 # build
 npm run docs:build

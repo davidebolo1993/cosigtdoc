@@ -1,6 +1,6 @@
 # Use Cases
 
-This section provides a comprehensive end-to-end example of how to run the [cosigt](https://github.com/davidebolo1993/cosigt) pipeline. The rationale behind each main step is explained in greater detail in the [usage section](/docs/usage/usage.md).
+This section provides a comprehensive end-to-end example of how to run the [cosigt](https://github.com/davidebolo1993/cosigt) pipeline. The rationale behind each main step is explained in greater detail in the [→ usage section](/usage/usage.html).
 
 ## Data Acquisition
 
@@ -13,7 +13,7 @@ cd cosigt_test
 
 ### Required Tools
 
-Several tools are necessary to complete the following sections. The most straightforward approach is to install them using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or similar package managers, as shown below (similar to the approach described in [setup documentation](/docs/setup/setup.md)):
+Several tools are necessary to complete the following sections. The most straightforward approach is to install them using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or similar package managers, as shown below (similar to the approach described in [→ setup documentation](/setup/setup.html)):
 
 ```bash
 cd cosigt_test
@@ -158,13 +158,13 @@ cd ..
 
 ### Clone cosigt Repository
 
-First, clone the cosigt repository from [GitHub](https://github.com/davidebolo1993/cosigt). Then follow the instructions in the [setup section](/docs/setup/setup.md) to prepare your working environment:
+First, clone the cosigt repository from [GitHub](https://github.com/davidebolo1993/cosigt). Then follow the instructions in the [→ setup section](/setup/setup.html) to prepare your working environment:
 
 ```bash
 git clone https://github.com/davidebolo1993/cosigt
 cd cosigt/cosigt_smk
 micromamba activate smk7324app132
-# Or: micromamba activate /path/to/smk7324app132
+# or: micromamba activate /path/to/smk7324app132
 ```
 
 ### Configure the Workflow
@@ -203,11 +203,11 @@ sh cosigt_smk.sh
 
 ### Genotyping Results
 
-Cosigt identifies the combination of haplotypes in the pangenome that best describes the structure of the sequenced sample (from short-reads) in the region of interest. This process is called `haplotype deconvolution` (or `genotyping`), as detailed in the [usage section](/docs/usage/usage.md).
+Cosigt identifies the combination of haplotypes in the pangenome that best describes the structure of the sequenced sample (from short-reads) in the region of interest. This process is called `haplotype deconvolution` (or `genotyping`), as detailed in the [→ usage section](/usage/usage.html).
 
 After running the cosigt pipeline as described above, results are stored in `cosigt_test/cosigt/{sample}/{chromosome}/{region}`. The directory structure should resemble the following:
 
-```txt
+```bash
 tree cosigt_test/cosigt
 cosigt_test/cosigt
 |-- HG00438
@@ -230,8 +230,57 @@ cosigt_test/cosigt
             `-- sorted_combos.tsv
 ```
 
-Each subdirectory contains a `cosigt_genotype.tsv` file that records the haplotype pair (`haplotype.1`, `haplotype.2`) assigned by cosigt to the sample (`sample.id`). The selected haplotype combination maximizes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between the sample and the pangenome. Detailed information about how this metric is calculated is available in the [usage section](/docs/usage/usage.md). Cosine similarity scores for all alternative combinations are stored in the `sorted_combos.tsv` file.
+Each subdirectory contains a `cosigt_genotype.tsv` file that records the haplotype pair (`haplotype.1`, `haplotype.2`) assigned by cosigt to the sample (`sample.id`). The selected haplotype combination maximizes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between the sample and the pangenome. Cosine similarity scores for all alternative combinations are stored in the `sorted_combos.tsv` file.
 
 ### Structural Clustering
 
-XXX Add details on structural clustering here XXX
+The pipeline identifies major structural variation patterns through a two-step approach, further explained in [→ usage](/usage/usage.html). Clustering results are in `cosigt_test/cluster/{chromosome}/{region}`:
+
+```bash
+tree cosigt_test/cluster
+cosigt_test/cluster/
+|-- chr22
+|   |-- chr22_42077656_42253758.clusters.hapdist.norm.tsv
+|   |-- chr22_42077656_42253758.clusters.hapdist.tsv
+|   |-- chr22_42077656_42253758.clusters.json
+|   |-- chr22_42077656_42253758.clusters.metrics.tsv
+|   `-- chr22_42077656_42253758.clusters.tsv
+`-- chr6
+    |-- chr6_31972057_32055418.clusters.hapdist.norm.tsv
+    |-- chr6_31972057_32055418.clusters.hapdist.tsv
+    |-- chr6_31972057_32055418.clusters.json
+    |-- chr6_31972057_32055418.clusters.metrics.tsv
+    `-- chr6_31972057_32055418.clusters.tsv
+```
+The `*.clusters.tsv` and `*.clusters.json` files list the assigned haplotype.group for each haplotype.name in tabular and [JSON](https://en.wikipedia.org/wiki/JSON) formats, respectively. These groupings represent clusters of structurally similar haplotypes.
+The `*.clusters.hapdist.tsv` and `*.clusters.hapdist.norm.tsv` files describe average haplotype distances between groups, with the normalized version scaled on the maximum distance value between all the pairs.
+The `*.clusters.metrics.tsv` file records clustering parameters such as the `eps` value used, primarily for debugging purposes.
+
+Clusters can be visually inspected by looking at the plots in `cosigt_test/odgi/viz/{chromosome}/{region}`:
+
+```bash
+cosigt_test/odgi/viz
+|-- chr22
+|   `-- chr22_42077656_42253758.png
+`-- chr6
+    `-- chr6_31972057_32055418.png
+```
+
+In these visualizations, haplotypes are ordered according to their cluster assignments, allowing easier identification of structurally related groups.
+
+### Interactive plot of genotyping results
+
+The cosigt pipeline includes an interactive [visualization tool](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/app.r) that enables dynamic exploration of genotyping outcomes across samples and regions. You can launch the app as follows:
+
+```bash
+cd workflow/scripts
+bash runapp.sh ../../cosigt_test
+#Listening on http://0.0.0.0:3838
+```
+
+Then, open your web browser and navigate to `http://0.0.0.0:3838` to view the results. For example:
+
+[<img src="./app.png" width="650" style="display: block; margin: 0 auto"/>](./app.png)
+
+The app primarily visualizes short-read coverage (`Sample Vector Coverage`, blue dots, left y-axis) versus haplotype coverage (`Pangenome Vector Coverage`, orange dots, right y-axis) across graph nodes (`Cumulative Haplotype Length`, x-axis). Each dot represents a graph node, and the `Cumulative Haplotype Length` accounts for the length of each node.
+For each region of interest (selectable via the Region menu) and sample (via the Sample menu), you can display up to two short-read vs. haplotype coverage comparisons: the first in the upper panel and the second in the lower panel. This allows you to compare the cosigt genotyping prediction against the expected haplotype coverage, helping to identify matches or coverage anomalies.

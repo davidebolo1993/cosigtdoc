@@ -111,7 +111,7 @@ Profiles for other cluster management systems can be found online (such as [this
 
 ### Organization of Pipeline Input
 
-We provide a [Python script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py) to automate the organization of folders and files used by the pipeline (see the [Usage](/docs/usage/usage.md) section for a detailed description and [Use Cases](/docs/usecases/usecases.md) for examples). It is **strongly recommended** to use this script during setup, as our workflow depends on the specific file structure it generates. Deviations from this structure may cause the pipeline to malfunction.
+We provide a [Python script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py) to automate the organization of folders and files used by the pipeline (see the [→ Usage](/usage/usage.html) section for a detailed description and [→ Use Cases](/usecases/usecases.html) for examples). It is **strongly recommended** to use this script during setup, as our workflow depends on the specific file structure it generates. Deviations from this structure may cause the pipeline to malfunction.
 
 ### Running Cosigt
 

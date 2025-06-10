@@ -1,17 +1,17 @@
 # Use Cases
 
-This section provides a comprehensive end-to-end example of how to run the [cosigt](https://github.com/davidebolo1993/cosigt) pipeline. The rationale behind each main step is explained in greater detail in the [→ usage section](/usage/usage.html).
+This section provides an end-to-end example of how to run the [COSIGT](https://github.com/davidebolo1993/cosigt). The rationale behind each main step is explained in greater detail in the [→ usage section](/usage/usage.html).
 
-## Data Acquisition
+## Preparation
 
-We can create a minimal test dataset to demonstrate cosigt functionality using publicly available data. Let's start by creating a test directory:
+Let's start by creating a test directory:
 
 ```bash
 mkdir cosigt_test
 cd cosigt_test
 ```
 
-### Required Tools
+### Required tools
 
 Several tools are necessary to complete the following sections. The most straightforward approach is to install them using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or similar package managers, as shown below (similar to the approach described in [→ setup documentation](/setup/setup.html)):
 
@@ -28,9 +28,9 @@ micromamba create \
 micromamba activate $PWD/use_cases_env
 ```
 
-### Sequencing Reads
+### Sequencing reads
 
-The cosigt pipeline requires sequencing reads previously aligned to a reference genome in standard [bam](https://samtools.github.io/hts-specs/SAMv1.pdf) or [cram](https://samtools.github.io/hts-specs/CRAMv3.pdf) format. We can obtain suitable alignment files from the [1000 Genomes Project](https://www.internationalgenome.org/data-portal/data-collection/30x-grch38):
+COSIGT requires sequencing reads previously aligned to a reference genome in [bam](https://samtools.github.io/hts-specs/SAMv1.pdf) or [cram](https://samtools.github.io/hts-specs/CRAMv3.pdf) format. We can obtain suitable alignment files from the [1000 Genomes Project](https://www.internationalgenome.org/data-portal/data-collection/30x-grch38):
 
 ```bash
 mkdir alignments
@@ -46,7 +46,7 @@ wget -i 1000G.selected.txt
 cd ..
 ```
 
-### Reference Genome
+### Reference genome
 
 A reference genome is required for two purposes: extracting region-specific reads from the original alignments (particularly for .cram format files) and serving as one of the assemblies against which samples are compared. In this example, reads are aligned to [GRCh38](https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_reference_genome/):
 
@@ -60,11 +60,11 @@ wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_referen
 cd ..
 ```
 
-### Genome Assemblies
+### Genome assemblies
 
-The cosigt pipeline begins with individual contigs to construct pangenome graphs of regions targeted for genotyping. Our workflow expects contigs to be grouped by their corresponding reference chromosome. Below are two alternative strategies for generating such chromosome-specific assemblies, which users can choose based on their available data.
+COSIGT begins with individual contigs to construct pangenome graphs of regions targeted for genotyping. Our workflow expects contigs to be grouped by their corresponding reference chromosome. Below are two alternative strategies for generating such chromosome-specific assemblies, which users can choose based on their available data.
 
-#### Option 1: Starting from a Chromosome-Specific Graph
+#### Option 1: Starting from a chromosome-specific graph
 
 One approach is to extract contig lists for specific chromosomes from existing chromosome-specific pangenome graphs. For example, [Year 1](https://github.com/human-pangenomics/HPP_Year1_Assemblies) of the [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) provides [such data](https://s3-us-west-2.amazonaws.com/human-pangenomics/index.html?prefix=pangenomes/freeze/freeze1/pggb/chroms/). We'll limit our analysis to `chr6` and `chr22` since these contain our [regions of interest](#regions-of-interest):
 
@@ -101,10 +101,10 @@ cd ..
 ```
 
 ::: tip
-This represents just one possible strategy for subsetting assemblies from chromosome-specific pangenome graphs. Alternatively, you can subset the initial .gfa to paths of interest using `odgi paths -i GFA -K PATHS.TXT -o SUBSET.OG` and then extract the assemblies as FASTA from the subgraph with `odgi paths -i SUBSET.OG -f > SUBSET.FASTA`. 
+This represents just one possible strategy for subsetting assemblies from chromosome-specific pangenome graphs. Alternatively, you can subset the initial GFA file to paths of interest using `odgi paths -i GFA -K PATHS.TXT -o SUBSET.OG` and then extract the assemblies as FASTA from the subgraph with `odgi paths -i SUBSET.OG -f > SUBSET.FASTA`. 
 :::
 
-#### Option 2: Starting from Individual Contigs
+#### Option 2: Starting from individual contigs
 
 An alternative approach is to determine which reference chromosome each sample-specific contig most likely belongs to using [Mash distances](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0997-x). This method doesn't require chromosome-specific graphs and can start directly from individual assemblies:
 
@@ -142,9 +142,9 @@ for chr in chr6 chr22; do
 done
 ```
 
-### Regions of Interest
+### Regions of interest
 
-The final piece of information required for the pipeline is a list of target regions located on the chromosomes for which we have assemblies (chromosomes 6 and 22 in this example). Notable examples include the [C4](https://en.wikipedia.org/wiki/Complement_component_4) and [CYP2D6](https://en.wikipedia.org/wiki/CYP2D6) loci:
+The final piece of information required for COSIGT is a list of target regions located on the chromosomes for which we have assemblies (chromosomes 6 and 22 in this example). Notable examples include the [C4](https://en.wikipedia.org/wiki/Complement_component_4) and [CYP2D6](https://en.wikipedia.org/wiki/CYP2D6) loci:
 
 ```bash
 mkdir regions
@@ -154,11 +154,11 @@ echo -e "chr22\t42077656\t42253758\tCYP2D6" >> roi.bed
 cd ..
 ```
 
-## Pipeline Execution
+## Execution
 
-### Clone cosigt Repository
+### Clone COSIGT repository
 
-First, clone the cosigt repository from [GitHub](https://github.com/davidebolo1993/cosigt). Then follow the instructions in the [→ setup section](/setup/setup.html) to prepare your working environment:
+First, clone the COSIGT repository from [GitHub](https://github.com/davidebolo1993/cosigt).
 
 ```bash
 git clone https://github.com/davidebolo1993/cosigt
@@ -167,9 +167,11 @@ micromamba activate smk7324app132
 # or: micromamba activate /path/to/smk7324app132
 ```
 
-### Configure the Workflow
+Then follow the instructions in the [→ setup section](/setup/setup.html) to prepare your working environment.
 
-With all necessary data prepared, we can now configure the pipeline using the [dedicated setup script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py):
+### Configure the workflow
+
+We can now configure the pipeline using the [dedicated setup script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py):
 
 ```bash
 # Map each chromosome to its assembly file (required)
@@ -178,7 +180,7 @@ for c in $(ls ../../assemblies_a/*.fasta.gz); do fasta=$(basename $c) && id=$(ec
 for s in $(ls ../../alignments/*.cram); do cram=$(basename $s) && id=$(echo $cram | cut -d "." -f 1) && echo -e "$s\t$id" >> sample_map.tsv ; done
 # Download gene annotations for the regions of interest (optional)
 wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/gencode.v47.annotation.gtf.gz
-# Organize input for cosigt
+# Organize input for COSIGT
 python workflow/scripts/organize.py \
     -a asm_map.tsv \
     -g ../../reference/GRCh38_full_analysis_set_plus_decoy_hla.fa \
@@ -191,21 +193,21 @@ python workflow/scripts/organize.py \
     --threads 8
 ```
 
-### Run the Workflow
+### Run the workflow
 
-The `cosigt_smk.sh` file generated by the previous command contains a ready-to-use command that will execute cosigt using the Docker containers provided with the pipeline:
+The `cosigt_smk.sh` file generated by the previous command contains a ready-to-use command that will execute COSIGT using the Docker containers provided with the pipeline:
 
 ```bash
 sh cosigt_smk.sh
 ```
 
-## Exploring Results
+## Exploring results
 
-### Genotyping Results
+### Genotyping results
 
-Cosigt identifies the combination of haplotypes in the pangenome that best describes the structure of the sequenced sample (from short-reads) in the region of interest. This process is called `haplotype deconvolution` (or `genotyping`), as detailed in the [→ usage section](/usage/usage.html).
+COSIGT identifies the combination of haplotypes in the pangenome that best describes the structure of the sequenced sample in the region of interest. This process is called `haplotype deconvolution` (or `genotyping`), as detailed in the [→ usage section](/usage/usage.html).
 
-After running the cosigt pipeline as described above, results are stored in `cosigt_test/cosigt/{sample}/{chromosome}/{region}`. The directory structure should resemble the following:
+After running COSIGT as described above, results are stored in `cosigt_test/cosigt/{sample}/{chromosome}/{region}`. The directory structure should resemble the following:
 
 ```bash
 tree cosigt_test/cosigt
@@ -230,11 +232,11 @@ cosigt_test/cosigt
             `-- sorted_combos.tsv
 ```
 
-Each subdirectory contains a `cosigt_genotype.tsv` file that records the haplotype pair (`haplotype.1`, `haplotype.2`) assigned by cosigt to the sample (`sample.id`). The selected haplotype combination maximizes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between the sample and the pangenome. Cosine similarity scores for all alternative combinations are stored in the `sorted_combos.tsv` file.
+Each subdirectory contains a `cosigt_genotype.tsv` file that records the haplotype pair (`haplotype.1`, `haplotype.2`) assigned by COSIGT to the sample (`sample.id`). The selected haplotype pair maximizes the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between the sample and the pangenome. Cosine similarity scores for all possible pairs are stored in the `sorted_combos.tsv` file.
 
-### Structural Clustering
+### Structural clustering
 
-The pipeline identifies major structural variation patterns through a two-step approach, further explained in [→ usage](/usage/usage.html). Clustering results are in `cosigt_test/cluster/{chromosome}/{region}`:
+COSIGT identifies major structural variation patterns through a two-step approach, further explained in [→ usage](/usage/usage.html). Clustering results are in `cosigt_test/cluster/{chromosome}/{region}`:
 
 ```bash
 tree cosigt_test/cluster
@@ -268,9 +270,9 @@ cosigt_test/odgi/viz
 
 In these visualizations, haplotypes are ordered according to their cluster assignments, allowing easier identification of structurally related groups.
 
-### Interactive plot of genotyping results
+### ADVANCED: Interactive plot of genotyping results
 
-The cosigt pipeline includes an interactive [visualization tool](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/app.r) that enables dynamic exploration of genotyping outcomes across samples and regions. You can launch the app as follows:
+COSIGT includes an [interactive app](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/app.r) that enables dynamic exploration of genotyping outcomes across samples and regions. You can launch the app as follows:
 
 ```bash
 cd workflow/scripts
@@ -283,4 +285,4 @@ Then, open your web browser and navigate to `http://0.0.0.0:3838` to view the re
 [<img src="./app.png" width="650" style="display: block; margin: 0 auto"/>](./app.png)
 
 The app primarily visualizes short-read coverage (`Sample Vector Coverage`, blue dots, left y-axis) versus haplotype coverage (`Pangenome Vector Coverage`, orange dots, right y-axis) across graph nodes (`Cumulative Haplotype Length`, x-axis). Each dot represents a graph node, and the `Cumulative Haplotype Length` accounts for the length of each node.
-For each region of interest (selectable via the Region menu) and sample (via the Sample menu), you can display up to two short-read vs. haplotype coverage comparisons: the first in the upper panel and the second in the lower panel. This allows you to compare the cosigt genotyping prediction against the expected haplotype coverage, helping to identify matches or coverage anomalies.
+For each region of interest (selectable via the Region menu) and sample (via the Sample menu), you can display up to two short-read vs. haplotype coverage comparisons: the first in the upper panel and the second in the lower panel. This allows you to compare the COSIGT genotyping prediction against the expected haplotype coverage, helping to identify matches or coverage anomalies.

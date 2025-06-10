@@ -1,13 +1,13 @@
-# Pipeline Setup
+# Workflow Setup
 
-This section provides detailed instructions for setting up the cosigt pipeline on your system.
+This section provides detailed instructions for setting up COSIGT on your system.
 
 ## Prerequisites
 
-Cosigt is built on version 7 of the popular [Snakemake](https://snakemake.github.io) workflow management system. Detailed instructions for installing Snakemake are available in the [official documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). Below is a minimal installation script using [micromamba](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html).
+COSIGT is built on the popular [Snakemake](https://snakemake.github.io) workflow management system. Detailed instructions for installing Snakemake are available in the [official documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). Below is a minimal installation script using [micromamba](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html).
 
 ::: warning
-We have tested the cosigt pipeline with Snakemake version 7.32.4. At the time of writing, Snakemake has migrated to versions 8/9, introducing changes that we have not yet evaluated - therefore, versions >=8 are not currently supported.
+We have tested COSIGT with Snakemake version 7.32.4. At the time of writing, Snakemake has migrated to versions 8/9, introducing changes that we have not yet evaluated - therefore, versions >=8 are not currently supported.
 :::
 
 ```bash
@@ -33,18 +33,18 @@ singularity --version
 The code above should automatically install `PyYAML` in the environment. If this package is missing, you can install it with `pip install PyYAML`
 :::
 
-Cosigt combines numerous tools across different workflow branches, which can present setup challenges for some users. To simplify deployment and enhance reproducibility, we provide [Docker](https://www.docker.com/) containers with pre-compiled binaries for all required software. These containers are automatically managed by the pipeline when a working [Apptainer](https://apptainer.org/) (formerly Singularity) installation is available. Alternatively, the pipeline can be run using dedicated [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html) environments, which are provided for each rule in the workflow. For users who prefer not to use Singularity or Conda, all [required tools](#tools) must be manually installed and made available in the system `$PATH`.
+COSIGT combines numerous tools across different workflow branches. To simplify deployment and enhance reproducibility, we provide [Docker](https://www.docker.com/) containers with pre-compiled binaries for all required software. These containers are automatically managed by COSIGT when a working [Apptainer](https://apptainer.org/) (formerly Singularity) installation is available. Alternatively, COSIGT can be run using dedicated [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html) environments, which are provided for each rule in the workflow. For users who prefer not to use Singularity or Conda, all [required tools](#tools) must be manually installed and made available in the system `$PATH`.
 
 ## Configuration
 
-Once the [prerequisites](#prerequisites) are in place, clone the cosigt pipeline repository:
+Once the [prerequisites](#prerequisites) are in place, clone COSIGT repository:
 
 ```bash
 git clone https://github.com/davidebolo1993/cosigt
 cd cosigt/cosigt_smk
 ```
 
-### Job Submission on HPC
+### Job submission on HPC
 
 For users working with high-performance computing (HPC) clusters, we recommend creating a [profile](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles) to manage job submission. For example, a cookiecutter profile for the SLURM workload manager is available [here](https://github.com/Snakemake-Profiles/slurm) and can be configured as follows:
 
@@ -104,22 +104,22 @@ config/slurm
 ```
 
 ::: tip
-The configuration above enables running the cosigt pipeline using Docker containers through Singularity. If you prefer a Conda-based solution, change your answers in steps 2/17 and 3/17 accordingly, or modify the resulting `config/slurm/config.yaml` file with `use-singularity: "False"` and `use-conda: "True"`.
+The configuration above enables running COSIGT using Docker containers through Singularity. If you prefer a Conda-based solution, change your answers in steps 2/17 and 3/17 accordingly, or modify the resulting `config/slurm/config.yaml` file with `use-singularity: "False"` and `use-conda: "True"`.
 :::
 
 Profiles for other cluster management systems can be found online (such as [this one](https://github.com/Christian-Heyer/snakemake-lsf) for LSF), though we have not tested them with this workflow.
 
-### Organization of Pipeline Input
+### Input preparation
 
-We provide a [Python script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py) to automate the organization of folders and files used by the pipeline (see the [→ Usage](/usage/usage.html) section for a detailed description and [→ Use Cases](/usecases/usecases.html) for examples). It is **strongly recommended** to use this script during setup, as our workflow depends on the specific file structure it generates. Deviations from this structure may cause the pipeline to malfunction.
+We provide a [Python script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py) to automate the organization of folders and files used by COSIGT (see the [→ Usage](/usage/usage.html) section for a detailed description and [→ Use Cases](/usecases/usecases.html) for examples). It is **strongly recommended** to use this script during setup, as COSIGT depends on the specific file structure it generates. Deviations from this structure may cause COSIGT to malfunction.
 
-### Running Cosigt
+### Running COSIGT
 
-The [Python script](#organization-of-pipeline-input) generates a ready-to-use Bash script (`cosigt_smk.sh`) to run the cosigt pipeline through Singularity (or Conda). To run cosigt without using Singularity or Conda, ensure all necessary [tools](#tools) are available in your `$PATH` and execute `snakemake cosigt -j <cores>`.
+The [Python script](#input-preparation) generates a ready-to-use Bash script (`cosigt_smk.sh`) to run COSIGT through Singularity (or Conda). To run COSIGT without using Singularity or Conda, ensure all necessary [tools](#tools) are available in your `$PATH` and execute `snakemake cosigt -j <cores>`.
 
 ## Tools
 
-Below is a list of tools and their versions used across all branches of the pipeline (in alphabetical order). These versions correspond to the latest release of the pipeline. For guidance on manual installation of most tools, refer to the Dockerfiles in [this repository](https://github.com/davidebolo1993/cosigt_containers/tree/main).
+Below is a list of tools and their versions used across all branches of COSIGT (in alphabetical order). For guidance on manual installation of most tools, refer to the Dockerfiles in [this repository](https://github.com/davidebolo1993/cosigt_containers/tree/main).
 
 
 | Tool            | Version/Commit          |
@@ -144,7 +144,7 @@ The reads-to-assemblies alignment step uses branch-specific tools:
 
 Various calculations and visualizations are performed in R using multiple libraries. A complete list of required R packages can be found [here](https://github.com/davidebolo1993/cosigt_containers/blob/877bd1ecac86de8c1f079d08884c434c823786c7/renv/4.3.3/Dockerfile#L21-L50).
 
-## Installation Test
+## Installation test
 
 We provide a small test dataset to verify your installation, available for download [here](https://drive.google.com/file/d/1RClqLk7pObNXmTNns3cyHtCwC_i3tnLP/view?usp=sharing). This dataset includes:
 

@@ -1,6 +1,6 @@
 # Use Cases
 
-This section provides a comprehensive end-to-end example of how to run the [cosigt](https://github.com/davidebolo1993/cosigt) pipeline. The rationale behind each main step is explained in greater detail in the [→ usage section](/usage/usage.html).
+This section provides a comprehensive end-to-end example of how to run the [cosigt](https://github.com/davidebolo1993/cosigt) pipeline. The rationale behind each main step is explained in greater detail in the [→ workflow section](/workflow/workflow.html).
 
 ## Data Acquisition
 
@@ -203,7 +203,7 @@ sh cosigt_smk.sh
 
 ### Genotyping Results
 
-Cosigt identifies the combination of haplotypes in the pangenome that best describes the structure of the sequenced sample (from short-reads) in the region of interest. This process is called `haplotype deconvolution` (or `genotyping`), as detailed in the [→ usage section](/usage/usage.html).
+Cosigt identifies the combination of haplotypes in the pangenome that best describes the structure of the sequenced sample (from short-reads) in the region of interest. This process is called `haplotype deconvolution` (or `genotyping`), as detailed in the [→ workflow section](/workflow/workflow.html).
 
 After running the cosigt pipeline as described above, results are stored in `cosigt_test/cosigt/{sample}/{chromosome}/{region}`. The directory structure should resemble the following:
 
@@ -234,7 +234,7 @@ Each subdirectory contains a `cosigt_genotype.tsv` file that records the haploty
 
 ### Structural Clustering
 
-The pipeline identifies major structural variation patterns through a two-step approach, further explained in [→ usage](/usage/usage.html). Clustering results are in `cosigt_test/cluster/{chromosome}/{region}`:
+The pipeline identifies major structural variation patterns through a two-step approach, further explained in [→ workflow](/workflow/workflow.html). Clustering results are in `cosigt_test/cluster/{chromosome}/{region}`:
 
 ```bash
 tree cosigt_test/cluster

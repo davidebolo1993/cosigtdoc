@@ -111,7 +111,7 @@ Profiles for other cluster management systems can be found online (such as [this
 
 ### Organization of Pipeline Input
 
-We provide a [Python script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py) to automate the organization of folders and files used by the pipeline (see the [→ Usage](/usage/usage.html) section for a detailed description and [→ Use Cases](/usecases/usecases.html) for examples). It is **strongly recommended** to use this script during setup, as our workflow depends on the specific file structure it generates. Deviations from this structure may cause the pipeline to malfunction.
+We provide a [Python script](https://github.com/davidebolo1993/cosigt/blob/master/cosigt_smk/workflow/scripts/organize.py) to automate the organization of folders and files used by the pipeline (see the [→ Workflow](/workflow/workflow.html) section for a detailed description and [→ Use Cases](/usecases/usecases.html) for examples). It is **strongly recommended** to use this script during setup, as our workflow strictly depends on the specific file structure it generates. Deviations from this structure may cause the pipeline to malfunction.
 
 ### Running Cosigt
 
@@ -125,22 +125,22 @@ Below is a list of tools and their versions used across all branches of the pipe
 | Tool            | Version/Commit          |
 | --------------- | ---------------- |
 | [bedtools](https://github.com/arq5x/bedtools2)  | v2.31.0 |
-| [cosigt](https://github.com/davidebolo1993/cosigt)  | v0.1.4 |
-| [gafpack](https://github.com/pangenome/gafpack)  |  v0.1.2 |
-| [gfainject](https://github.com/AndreaGuarracino/gfainject)  |  v0.2.0 |
-| [impg](https://github.com/pangenome/impg)  |  v0.2.3 |
-| [odgi](https://github.com/pangenome/odgi)  | v0.9.2 |
-| [pggb](https://github.com/pangenome/pggb)  | v0.7.4 |
-| [samtools](https://github.com/samtools/samtools)  | v1.21 |
+| [cosigt](https://github.com/davidebolo1993/cosigt)  | vx.x.x |
+| [gafpack](https://github.com/pangenome/gafpack)  |  vx.x.x |
+| [gfainject](https://github.com/AndreaGuarracino/gfainject)  |  vx.x.x |
+| [impg](https://github.com/pangenome/impg)  |  vx.x.x |
+| [minimap2](https://github.com/lh3/minimap2)  | v2.28 |
+| [odgi](https://github.com/pangenome/odgi)  | vx.x.x |
+| [pggb](https://github.com/pangenome/pggb)  | vx.x.x |
+| [samtools](https://github.com/samtools/samtools)  | v1.22 |
 | [wally](https://github.com/tobiasrausch/wally)  | v0.7.1 |
-| [wfmash](https://github.com/waveygang/wfmash)  | v0.14.0 |
 
 The reads-to-assemblies alignment step uses branch-specific tools:
 
-| Tool            | Version/Commit         | Branch          |
-| --------------- | ---------------- |---------------- |
-| [bwa](https://github.com/lh3/bwa)  | v0.7.18 | short-reads, ancient genomes |
-| [bwa-mem2](https://github.com/bwa-mem2/bwa-mem2)  | v2.2.1 | short-reads, modern genomes  |
+| Tool            | Version/Commit         | Usage          | Branch          | 
+| --------------- | ---------------- |---------------- |---------------- |
+| [bwa](https://github.com/lh3/bwa)  | v0.7.18 | short-reads, ancient genomes | ancient_dna |
+| [bwa-mem2](https://github.com/bwa-mem2/bwa-mem2)  | v2.2.1 | short-reads, modern genomes  | master, custom_alleles  |
 
 Various calculations and visualizations are performed in R using multiple libraries. A complete list of required R packages can be found [here](https://github.com/davidebolo1993/cosigt_containers/blob/877bd1ecac86de8c1f079d08884c434c823786c7/renv/4.3.3/Dockerfile#L21-L50).
 
@@ -149,7 +149,7 @@ Various calculations and visualizations are performed in R using multiple librar
 We provide a small test dataset to verify your installation, available for download [here](https://drive.google.com/file/d/1RClqLk7pObNXmTNns3cyHtCwC_i3tnLP/view?usp=sharing). This dataset includes:
 
 1. A small reference sequence (`genome/genome.fa`): a 2 Mbp fragment extracted from chromosome 22 of the human GRCh38 reference genome
-2. Five assemblies (`assemblies/assemblies.fa`): each containing a single deletion relative to the reference, ranging from 10 to 50 Kbp
+2. Five (simulated) assembled contigs (`assemblies/assemblies.fa`): each containing a single deletion relative to the reference, ranging from 10 to 50 Kbp
 3. Synthetic reads (`sample/sample.bam`): 50% derived from the reference sequence and 50% from the assembly with a 30 Kbp deletion
 4. A BED file (`region/region.bed`) defining the region of interest
 
@@ -174,10 +174,9 @@ python workflow/scripts/organize.py \
     --threads 5
 # Run cosigt pipeline
 sh cosigt_smk.sh
-# Container pulling happens only once and won't be repeated in future runs
 ```
 
-After the initial pull of Singularity containers (a one-time operation), the entire test should take approximately 1 minute to complete. The genotype results will be available in `cosigt_test/cosigt/sample/chr22/chr22_1000000_1060000/cosigt_genotype.tsv`, showing the genotype of `sample` in region `chr22:1000000-1060000`. The expected genotype reported by cosigt should be:
+After the initial pull of Singularity containers (a one-time operation if using the same base folder - containers will be stored in `cosigt/cosigt_smk/.snakemake/singularity`), the entire test should take approximately 1 minute to complete. The genotype results will be available in `cosigt_test/cosigt/sample/chr22/chr22_1000000_1060000/cosigt_genotype.tsv`, showing the genotype of `sample` in region `chr22:1000000-1060000`. The expected genotype reported by cosigt should be:
 
 ```txt
 haplotype.1                haplotype.2

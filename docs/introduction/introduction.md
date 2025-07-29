@@ -1,6 +1,6 @@
 # Introduction
 
-[<img src="./cosigt.mod.png" width="350" style="display: block; margin: 0 auto"/>](./cosigt.mod.png)
+[<img src="./cosigt.png" width="350" style="display: block; margin: 0 auto"/>](./cosigt.png)
 
 Cosigt (**Pronunciation:** _/koˈziː.d͡ʒi.ti/_) pipeline is an end-to-end workflow whose aim is to assign structural haplotypes to sequenced samples using pangenome graphs. 
 
@@ -8,9 +8,9 @@ Cosigt (**Pronunciation:** _/koˈziː.d͡ʒi.ti/_) pipeline is an end-to-end wor
 
 1. **Setup** - Initial pipeline configuration and installation instructions
    - [→ Go to Setup Guide](/setup/setup.html)
-2. **Usage** - Detailed explanation of the workflow principles
-   - [→ Go to Usage Guide](/usage/usage.html)
-3. **Use Cases** - Examples using publicly available data to demonstrate pipeline functionality
+2. **Workflow** - Broad explanation of the workflow principles
+   - [→ Go to Workflow Guide](/workflow/workflow.html)
+3. **Use Cases** - Examples using publicly available data to demonstrate pipeline setup, input preparation and workflow functionaliyty
    - [→ Go to Use Cases](/usecases/usecases.html)
 
 ## Citation

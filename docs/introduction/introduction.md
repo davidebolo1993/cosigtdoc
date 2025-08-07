@@ -10,7 +10,7 @@ Cosigt (**Pronunciation:** _/koˈziː.d͡ʒi.ti/_) pipeline is an end-to-end wor
    - [→ Go to Setup Guide](/setup/setup.html)
 2. **Workflow** - Broad explanation of the workflow principles
    - [→ Go to Workflow Guide](/workflow/workflow.html)
-3. **Use Cases** - Examples using publicly available data to demonstrate pipeline setup, input preparation and workflow functionaliyty
+3. **Use Cases** - Examples using publicly available data to demonstrate pipeline setup, input preparation and workflow functionality
    - [→ Go to Use Cases](/usecases/usecases.html)
 
 ## Citation

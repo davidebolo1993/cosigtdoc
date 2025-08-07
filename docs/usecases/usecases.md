@@ -357,7 +357,7 @@ python workflow/scripts/organize.py \
     --profile config/slurm
 ```
 
-The entire workflow can then be run with `sh cosigt_smk.sh`.
+The entire workflow can then be run with `sh cosigt_smk.sh`. Users may want to refine the regions provided to `--bed` using the [refine](#refine-workflow) mode od cosigt. This is not required for with the current example.
 
 ## Exploring Results
 
@@ -553,3 +553,12 @@ sh cosigt_smk.sh
 ```
 
 The output structure and interpretation remain identical to those described in the [previuos sections](#exploring-results). 
+
+## Refine Workflow
+
+In addition to the main **cosigt** workflow, our Snakemake pipeline also supports a **refine** mode (available in both the `master` and `ancient_dna` branches).  
+This mode attempts to dynamically extend the input regions at both flanks to retain as many haplotypes as possible during the `impg` step, up to a configurable extension threshold (default: ±60 kb).
+To run the refine workflow, simply replace `"cosigt"` with `"refine"` in the `cosigt_smk.sh` script.
+The output is a BED file containing the refined regions in `cosigt_results/refine/regions_refined.bed`. 
+This refined BED file can then be used as input for a new cosigt run by replacing the original regions BED file.  
+If you reuse the same output directory (`--output`), the pipeline will skip the initial query-to-target alignment step, recycling those generated in the `refine` mode.

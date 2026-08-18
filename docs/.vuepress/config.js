@@ -12,10 +12,11 @@ module.exports = {
     sidebar: [
       '/introduction/introduction.md',
       '/setup/setup.md',
+      '/configuration/configuration.md',
       '/workflow/workflow.md',
       '/usecases/usecases.md',
+      '/benchmarking/benchmarking.md',
       '/contact/contact.md'
     ],
   }
 }
-

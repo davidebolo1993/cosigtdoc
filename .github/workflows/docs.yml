@@ -1,0 +1,119 @@
+name: Build and deploy docs
+
+# Push the sources; the site is built and published here. Nothing needs to be
+# built or deployed by hand.
+#
+#   push to master  -> build and publish to the gh-pages branch
+#   pull request    -> build only, so a broken page is caught before merge
+#   manual dispatch -> build and publish from whichever branch you select
+#
+# Publishing is additionally held behind the switch at the top of the build
+# job. It is currently OFF, so the docs for the unified workflow are checked
+# but not made live. See the "Publishing switch" step below.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+# Pushing the built site to gh-pages needs write access to the repository.
+permissions:
+  contents: write
+
+# Never let two deploys race: gh-pages is force-pushed, so the loser would win.
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.gate.outputs.publish }}
+    steps:
+      - name: Publishing switch
+        id: gate
+        # ------------------------------------------------------------------
+        # Set to 'true' to let the site go live, 'false' to hold it back.
+        #
+        # While this is 'false' the docs are still built and checked on every
+        # run, but nothing is ever written to gh-pages, so the published page
+        # keeps showing the previous release. Flip it to 'true' once the
+        # unified workflow has been verified.
+        # ------------------------------------------------------------------
+        run: echo "publish=false" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        # VuePress 1 builds with webpack 4, whose md4 hashing is rejected by the
+        # OpenSSL 3 shipped with Node 17+.
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: npm run docs:build
+
+      - name: Check the expected pages were produced
+        run: |
+          set -e
+          for page in index introduction/introduction setup/setup \
+                      configuration/configuration workflow/workflow \
+                      usecases/usecases benchmarking/benchmarking contact/contact; do
+            test -f "docs/.vuepress/dist/${page}.html" \
+              || { echo "missing page: ${page}.html"; exit 1; }
+          done
+          echo "all pages present"
+
+      - name: Upload the built site
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: docs/.vuepress/dist
+          retention-days: 7
+
+  deploy:
+    needs: build
+    # Publish only when the switch in the build job is on, and never from a
+    # pull request. With the switch off this job is skipped and gh-pages is
+    # left exactly as it is.
+    if: needs.build.outputs.publish == 'true' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: npm run docs:build
+
+      - name: Publish to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          cd docs/.vuepress/dist
+          # Tell GitHub Pages not to run Jekyll, which would drop any path
+          # beginning with an underscore.
+          touch .nojekyll
+          git init -q
+          git checkout -q -b gh-pages
+          git add -A
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -q -m "deploy ${GITHUB_SHA} from ${GITHUB_REF_NAME}"
+          git push -f \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            gh-pages

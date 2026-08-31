@@ -117,9 +117,6 @@ cd cosigt
 make init
 ```
 
-::: tip
-There is no longer a setup script to run, and no branch to choose. `make init` copies the example configuration into `cosigt_smk/config/`, and the strategies that used to live on separate branches are now keys: `read_mode` for short / ancient / long reads, `allele_source` for assemblies versus a curated allele panel.
-:::
 
 Fill in the three tables. Paths may be relative to `cosigt_smk/` or absolute:
 

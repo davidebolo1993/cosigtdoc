@@ -45,7 +45,7 @@ pip install snakemake-executor-plugin-cluster-generic
 `make check` verifies that the plugin required by your chosen profile is present and prints the exact install command if it is missing, so you do not have to work this out in advance.
 
 ::: tip
-Profiles for `local`, `slurm`, `lsf` and `cluster-generic` ship with the pipeline in `cosigt_smk/profiles/`. The cookiecutter-based profile generation described in earlier versions of this documentation is no longer needed.
+Profiles for `local`, `slurm`, `lsf` and `cluster-generic` ship with the pipeline in `cosigt_smk/profiles/`.
 :::
 
 ## Getting started
@@ -106,9 +106,7 @@ Wrote .cosigt.mk: profile=local software=apptainer target=cosigt cores=32
 All checks passed. Run the pipeline with: make run
 ```
 
-Those flags are the bind mounts covering every configured input and output location, collapsed to the shortest set of parent directories, plus `-e` (`--cleanenv`), which pggb requires. `make run` picks them up automatically, so bind paths no longer have to be worked out by hand.
-
-Because `check` persists what it validated, `make check PROFILE=slurm` followed by a bare `make run` executes the configuration that was actually checked. Command-line variables still override the file.
+Those flags are the bind mounts covering every configured input and output location, collapsed to the shortest set of parent directories, plus `-e` (`--cleanenv`), which pggb requires. `make run` picks them up automatically. Because `check` persists what it validated, `make check PROFILE=slurm` followed by a bare `make run` executes the configuration that was actually checked. Command-line variables still override the file.
 
 ### make run
 
@@ -134,9 +132,6 @@ make run SOFTWARE=conda                    # conda environments instead of conta
 make run PROFILE=cluster-generic SMK_ARGS='--cluster-generic-submit-cmd "qsub"'
 ```
 
-::: tip
-Site-specific Apptainer flags belong in `apptainer_extra` in `config.yaml`, not in `SMK_ARGS`, which Snakemake itself interprets.
-:::
 
 ## Tools
 

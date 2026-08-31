@@ -108,7 +108,7 @@ All checks passed. Run the pipeline with: make run
 
 Those flags are the bind mounts covering every configured input and output location, collapsed to the shortest set of parent directories, plus `-e` (`--cleanenv`), which pggb requires. `make run` picks them up automatically, so bind paths no longer have to be worked out by hand.
 
-Because `check` persists what it validated, `make check PROFILE=slurm` followed by a bare `make run` executes the configuration that was actually checked. Without that the two could disagree — validating the SLURM executor plugin, then running locally. A hand-edited `CORES` survives, and command-line variables still override the file.
+Because `check` persists what it validated, `make check PROFILE=slurm` followed by a bare `make run` executes the configuration that was actually checked. Command-line variables still override the file.
 
 ### make run
 

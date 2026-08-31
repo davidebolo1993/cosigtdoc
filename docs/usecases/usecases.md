@@ -161,6 +161,7 @@ gtf: /absolute/path/to/cosigt_test/annotations/gencode.v48.annotation.gtf.gz
 proteins: /absolute/path/to/cosigt_test/annotations/gencode.v48.pc_translations.fa.gz
 flagger_blacklist: /absolute/path/to/cosigt_test/flagger/flagger.exclude.bed
 vcf: true
+svbyeye_viz: true
 ```
 
 Validate, then run:
@@ -203,7 +204,7 @@ Each (sample, region) chain is already submitted as one job rather than seven, v
 make run PROFILE=slurm SMK_ARGS='--group-components genotype=1'
 ```
 
-See [→ Configuration](/configuration/configuration.html#job-grouping-on-clusters) for why raising this can produce a job no node can run.
+See [→ Configuration](/configuration/configuration.html#job-grouping-on-clusters) for how group resources are derived.
 
 ## Exploring results
 

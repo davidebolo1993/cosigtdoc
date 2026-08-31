@@ -110,6 +110,8 @@ vcf: false           # merged multi-sample VCF of the genotypes
 
 `gtf` and `proteins` must be given together or not at all. The VCF is produced for every `read_mode`.
 
+`svbyeye_viz` is what produces the `viz/<region>.ava.png` files, and it applies only to regions of ploidy 1 or 2. SVbyEye is not packaged for conda, so under `SOFTWARE=conda` it is installed from GitHub when the R environment is first created; the container ships it already.
+
 ## Containers
 
 ```yaml
@@ -180,14 +182,6 @@ make run PROFILE=slurm SMK_ARGS='--group-components genotype=1'
 ```
 
 Group resources are derived automatically. Rules that run in series combine by taking the maximum, except `runtime`, which is summed; rules that could run in parallel have their resources summed and `runtime` maximised.
-
-::: warning Raising --group-components above 1 is rarely worth it
-Chains packed into one group job run **in parallel**, so their resources are summed. With `kfilt` at 8 threads and 20 GB, `genotype=8` asks for 64 CPUs and 156 GB in a single submission. If no node in the partition is that large, the scheduler rejects it and Snakemake reports a generic failure with no rule log, because the job never started.
-
-`--cores` caps that aggregation, which makes the failure machine-dependent: it is detected from wherever `make` runs, usually a login node. A login node with more cores than any compute node produces a group job that can never be placed. Set `CORES` to the largest core count a **compute** node offers.
-
-Packing also trades away cluster parallelism — N chains that would have run on N nodes now share one. Raise it only if queue pressure is genuinely your bottleneck, and check the resulting request against your partition's per-node limits first.
-:::
 
 ## Reruns
 

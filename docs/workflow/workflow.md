@@ -1,12 +1,8 @@
 # Workflow
 
-The [rulegraph](https://snakemake.readthedocs.io/en/stable/executing/cli.html) below illustrates a compact representation of the cosigt workflow:
+The [rulegraph](https://snakemake.readthedocs.io/en/stable/executing/cli.html) below illustrates a compact representation of the default cosigt workflow:
 
 [<img src="./rulegraph.png" width="650" style="display: block; margin: 0 auto"/>](./rulegraph.png)
-
-::: warning
-The rulegraph above is from an earlier release and does not yet show the unmapped-read rescue, the node-masking step, or the reworked benchmarking. Regenerate it for your configuration with `make run SMK_ARGS="--rulegraph" | dot -Tpng > rulegraph.png`.
-:::
 
 Cosigt assigns structural haplotypes to sequenced samples by combining pangenome graph construction with cosine similarity-based classification. For each sample and region of interest it identifies the haplotype combination — drawn from a given set of alleles — that best explains the structural composition of that region.
 
@@ -134,10 +130,6 @@ Finally, the sample's coverage vector is compared against candidate haplotype co
 Cosine similarity is the right measure here because it is insensitive to overall magnitude: a sample sequenced at 10× and the same sample at 30× produce vectors pointing in the same direction with different lengths, and only the direction is informative about which haplotypes are present.
 
 Candidates are combinations **with repetition** of size equal to the region's ploidy. A diploid region is scored over all `C(n+1, 2)` pairs — every heterozygous pair plus every homozygous one — and a region of ploidy *k* over all `C(n+k-1, k)` multisets. For haploid regions each individual path is compared directly.
-
-::: tip
-Enumerating with repetition matters beyond diploid. A triploid sample that is A/A/B can only be called correctly if partially homozygous combinations are among the candidates; scoring only the fully heterozygous and fully homozygous ones would miss it entirely.
-:::
 
 Each region yields the best genotype with its cosine similarity and the cluster of each predicted haplotype, plus the complete ranking of every scored combination, which is useful when the top two are close.
 

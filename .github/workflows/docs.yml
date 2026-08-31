@@ -41,7 +41,7 @@ jobs:
         # keeps showing the previous release. Flip it to 'true' once the
         # unified workflow has been verified.
         # ------------------------------------------------------------------
-        run: echo "publish=false" >> "$GITHUB_OUTPUT"
+        run: echo "publish=true" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v4
 

@@ -4,21 +4,7 @@ Source for the [cosigt documentation](https://davidebolo1993.github.io/cosigtdoc
 
 ## Publishing
 
-Nothing to do by hand. Pushing to `master` builds the site and publishes it to the `gh-pages` branch via [`.github/workflows/docs.yml`](.github/workflows/docs.yml). Pull requests build without publishing, so a broken page is caught before it is merged.
-
-To publish from another branch, run the workflow manually from the Actions tab — note that this overwrites the live site.
-
-### Publishing is currently held back
-
-The documentation for the unified workflow is written but not yet live. A switch at the top of the `build` job holds it back:
-
-```yaml
-- name: Publishing switch
-  id: gate
-  run: echo "publish=false" >> "$GITHUB_OUTPUT"
-```
-
-While it reads `false`, every run still builds the site and checks that each page was produced, but the `deploy` job is skipped and `gh-pages` is untouched, so the published page keeps showing the previous release. Change `false` to `true` to let it go live.
+Pushing to `master` builds the site and publishes it to the `gh-pages` branch via [`.github/workflows/docs.yml`](.github/workflows/docs.yml).
 
 ## Working locally
 

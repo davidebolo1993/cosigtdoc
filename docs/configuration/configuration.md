@@ -173,13 +173,21 @@ jobs ≈ 7·S·R + 15·R + S
 
 so 500 samples over 100 regions is around 350,000 submissions. Those rules are therefore assigned to a Snakemake group called `genotype`. Snakemake submits each connected component of a group as a single cluster job and runs its rules in order, cutting those submissions by 7× with no change to the DAG, to rule granularity, or to resumability. Each rule still uses its own container or conda environment inside the group job.
 
-`--group-components genotype=N` packs N independent (sample, region) chains into one submission, giving a dial between full parallelism and a few large jobs:
+The profiles ship with `genotype=1`, which is where nearly all of the benefit is: the seven rules of one chain run back to back in a single allocation instead of re-queuing between each step.
 
 ```bash
-make run PROFILE=slurm SMK_ARGS='--group-components genotype=8'
+make run PROFILE=slurm SMK_ARGS='--group-components genotype=1'
 ```
 
-Group resources are derived automatically. Rules that run in series combine by taking the maximum, except `runtime` which is summed; rules that could run in parallel have their resources summed and `runtime` maximised. Raising `--group-components` multiplies the packed chains, so increase walltime accordingly if jobs start hitting limits.
+Group resources are derived automatically. Rules that run in series combine by taking the maximum, except `runtime`, which is summed; rules that could run in parallel have their resources summed and `runtime` maximised.
+
+::: warning Raising --group-components above 1 is rarely worth it
+Chains packed into one group job run **in parallel**, so their resources are summed. With `kfilt` at 8 threads and 20 GB, `genotype=8` asks for 64 CPUs and 156 GB in a single submission. If no node in the partition is that large, the scheduler rejects it and Snakemake reports a generic failure with no rule log, because the job never started.
+
+`--cores` caps that aggregation, which makes the failure machine-dependent: it is detected from wherever `make` runs, usually a login node. A login node with more cores than any compute node produces a group job that can never be placed. Set `CORES` to the largest core count a **compute** node offers.
+
+Packing also trades away cluster parallelism — N chains that would have run on N nodes now share one. Raise it only if queue pressure is genuinely your bottleneck, and check the resulting request against your partition's per-node limits first.
+:::
 
 ## Reruns
 

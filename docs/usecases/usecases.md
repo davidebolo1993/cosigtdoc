@@ -197,13 +197,13 @@ All checks passed. Run the pipeline with: make run
 make run PROFILE=slurm
 ```
 
-For large cohorts, pack several (sample, region) chains into each submission so the scheduler is not flooded:
+Each (sample, region) chain is already submitted as one job rather than seven, via the `genotype` group the profiles configure. Packing more than one chain per submission is possible but seldom pays off:
 
 ```bash
-make run PROFILE=slurm SMK_ARGS='--group-components genotype=8'
+make run PROFILE=slurm SMK_ARGS='--group-components genotype=1'
 ```
 
-See [→ Configuration](/configuration/configuration.html#job-grouping-on-clusters) for why this matters and how to size it.
+See [→ Configuration](/configuration/configuration.html#job-grouping-on-clusters) for why raising this can produce a job no node can run.
 
 ## Exploring results
 

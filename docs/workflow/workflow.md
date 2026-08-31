@@ -152,7 +152,7 @@ results/
 ├── cluster/<chr>/<region>/              assignments, medoids, diagnostics
 ├── odgi/viz/<chr>/<region>/             node-coverage plot               (odgi_viz)
 ├── pangene/viz/<chr>/<region>/          gene-order plot                  (pangene_viz)
-├── benchmark/                           QV tables and plots              (TARGET=benchmark)
+├── benchmark/<mode>/                    QV tables and plots              (TARGET=benchmark)
 └── metadata/                            per-region BEDs, normalised blacklist
 ```
 

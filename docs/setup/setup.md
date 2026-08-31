@@ -85,7 +85,7 @@ Edit these before running `make check`. See the [→ Configuration](/configurati
 - The executor plugin required by `PROFILE` is installed; for `local` it reports the cores it will use.
 - The runtime required by `SOFTWARE` is available — `apptainer` (accepting either `apptainer` or `singularity`), `conda` (including the 24.7.1 minimum Snakemake needs), or, for `none`, that every tool the current configuration will invoke is on `$PATH`. That list is derived from your config, so it accounts for `read_mode`, `vcf`, `gtf` and the visualisation switches.
 - The config file, sample table, region BED, assembly or allele tables, and every referenced file and index.
-- Finally it composes the Apptainer flags this run needs.
+- Finally it composes the Apptainer flags this run needs, and writes the settings it just validated to `.cosigt.mk`.
 
 ```txt
 cosigt check  (profile=local software=apptainer target=cosigt cores=32)
@@ -102,10 +102,13 @@ configuration and inputs:
 apptainer flags (used automatically by 'make run'):
   -B /group/soranzo,/project/ham,/tmp -e
 
+Wrote .cosigt.mk: profile=local software=apptainer target=cosigt cores=32
 All checks passed. Run the pipeline with: make run
 ```
 
 Those flags are the bind mounts covering every configured input and output location, collapsed to the shortest set of parent directories, plus `-e` (`--cleanenv`), which pggb requires. `make run` picks them up automatically, so bind paths no longer have to be worked out by hand.
+
+Because `check` persists what it validated, `make check PROFILE=slurm` followed by a bare `make run` executes the configuration that was actually checked. Without that the two could disagree — validating the SLURM executor plugin, then running locally. A hand-edited `CORES` survives, and command-line variables still override the file.
 
 ### make run
 
@@ -113,14 +116,14 @@ Runs the selected target. It re-reads the flags written by `check`, so run `chec
 
 ### Settings
 
-All three commands take the same variables, either on the command line or persisted in `.cosigt.mk` by `make init`:
+All three commands take the same variables, either on the command line or persisted in `.cosigt.mk` by `make init` and `make check`:
 
 | Variable   | Default        | Meaning |
 | ---------- | -------------- | ------- |
 | `PROFILE`  | `local`        | `local`, `slurm`, `lsf`, `cluster-generic`, a path, or `none` |
 | `SOFTWARE` | `apptainer`    | `apptainer`, `conda`, or `none` |
 | `TARGET`   | `cosigt`       | `cosigt`, `refine`, or `benchmark` |
-| `CORES`    | all detected   | passed to `--cores` |
+| `CORES`    | all detected   | passed to `--cores`. On cluster profiles set this to the largest core count a **compute** node offers — it is detected from wherever `make` runs, and it also caps the resources Snakemake aggregates into a group job |
 | `SMK_ARGS` | empty          | extra Snakemake arguments, e.g. `-n` for a dry run |
 
 ```bash

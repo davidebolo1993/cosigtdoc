@@ -41,6 +41,8 @@ chr6_31972057_32055418    /data/truth/c4.truth.og
 
 ::: tip
 Both predicted and true sequences are read from that one graph, so they are guaranteed to share an orientation frame. Graphs must be odgi `.og`; convert a GFA with `odgi build -g in.gfa -o out.og`. `make check` verifies the table is present, covers every region, and that each graph exists and has the right extension.
+
+The table is a real TSV: a `region`/`graph` header and exactly two **tab**-separated columns per row (the spacing above is only for readability). A row with more tabs than the header — a trailing tab is the usual culprit — is reported with its line number.
 :::
 
 ## QVfrac: separating two kinds of failure
@@ -65,7 +67,7 @@ This scan is the expensive part of `leave_all_out`: one edlib alignment per (tru
 
 ## Output
 
-Per-region tables are collected into `benchmark/benchmark.qv.tsv`:
+Per-region tables are collected into `benchmark/<mode>/benchmark.qv.tsv`, where `<mode>` is the configured `benchmark_mode`:
 
 | Column | Meaning |
 | ------ | ------- |
@@ -87,7 +89,7 @@ Both assignments of the two predictions to the two truths are scored and the bet
 
 ## Plot
 
-`benchmark/benchmark.qv.png` summarises the result per gene as a stacked bar, genes ordered by the share in the best band, with the number of samples printed above each bar. What is banded depends on the mode:
+`benchmark/<mode>/benchmark.qv.png` summarises the result per gene as a stacked bar, genes ordered by the share in the best band, with the number of samples printed above each bar. What is banded depends on the mode:
 
 - **`leave_zero_out`** bands `QV_pred` into four quality bands — `<= 17`, `17–23`, `23–33`, `> 33` — ordered by the share reaching `> 33`.
 - **`leave_all_out`** bins `QVfrac` into quintiles, ordered by the share in `Q5: 0.8–1.0`.

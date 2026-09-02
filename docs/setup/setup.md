@@ -112,6 +112,17 @@ Those flags are the bind mounts covering every configured input and output locat
 
 Runs the selected target. It re-reads the flags written by `check`, so run `check` first, and again after changing any input path.
 
+The targets are:
+
+| target | what it builds |
+| --- | --- |
+| `cosigt` | the default: genotypes every sample over every region |
+| `graph` | the per-region graphs, their clustering and the optional plots — and nothing that reads a sample's alignment |
+| `benchmark` | the QV tables and plot, see [→ Benchmarking](/benchmarking/benchmarking.html) |
+| `refine` | refined region boundaries, written to `refine/regions_refined.bed` |
+
+`graph` is a strict subset of `cosigt`: it stops once the graph side is complete, skipping read extraction, k-mer filtering, realignment, graph injection, coverage and genotyping. Use it to get the expensive `pggb` construction done once, or before the reads are available. A later `TARGET=cosigt` reuses everything it produced and only runs the per-sample half.
+
 ### Settings
 
 All three commands take the same variables, either on the command line or persisted in `.cosigt.mk` by `make init` and `make check`:
@@ -120,13 +131,14 @@ All three commands take the same variables, either on the command line or persis
 | ---------- | -------------- | ------- |
 | `PROFILE`  | `local`        | `local`, `slurm`, `lsf`, `cluster-generic`, a path, or `none` |
 | `SOFTWARE` | `apptainer`    | `apptainer`, `conda`, or `none` |
-| `TARGET`   | `cosigt`       | `cosigt`, `refine`, or `benchmark` |
+| `TARGET`   | `cosigt`       | `cosigt`, `graph`, `refine`, or `benchmark` |
 | `CORES`    | all detected   | passed to `--cores`. On cluster profiles set this to the largest core count a **compute** node offers — it is detected from wherever `make` runs, and it also caps the resources Snakemake aggregates into a group job |
 | `SMK_ARGS` | empty          | extra Snakemake arguments, e.g. `-n` for a dry run |
 
 ```bash
 make run PROFILE=slurm                     # cluster run
 make run SMK_ARGS=-n                       # dry run
+make run TARGET=graph                      # build the graphs only, no genotyping
 make run TARGET=benchmark                  # benchmarking instead of genotyping
 make run SOFTWARE=conda                    # conda environments instead of containers
 make run PROFILE=cluster-generic SMK_ARGS='--cluster-generic-submit-cmd "qsub"'

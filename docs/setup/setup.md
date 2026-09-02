@@ -123,6 +123,12 @@ The targets are:
 
 `graph` is a strict subset of `cosigt`: it stops once the graph side is complete, skipping read extraction, k-mer filtering, realignment, graph injection, coverage and genotyping. Use it to get the expensive `pggb` construction done once, or before the reads are available. A later `TARGET=cosigt` reuses everything it produced and only runs the per-sample half.
 
+Validation follows the target. `graph` and `refine` never read a sample's alignment, so neither requires `samples.tsv` or the BAM/CRAM files to exist, and under `SOFTWARE=none` each asks only for the tools it actually invokes — `graph` wants odgi, pggb, impg and friends, not bwa-mem2, kfilt or gafpack.
+
+::: warning Re-run check after changing TARGET
+The Apptainer bind mounts are derived from what the target reads, so those composed for `graph` omit the directories holding your alignments. `make run` compares the two and refuses to start on a mismatch rather than failing inside the container.
+:::
+
 ### Settings
 
 All three commands take the same variables, either on the command line or persisted in `.cosigt.mk` by `make init` and `make check`:

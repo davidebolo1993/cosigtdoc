@@ -32,7 +32,7 @@ This documentation describes the **unified** cosigt workflow. If you have used c
 
 Refer to this manuscript if you use cosigt in your work:
 
-Bolognini, D. et al. (2026). COSIGT: population‑scalable genotyping of complex loci from low‑coverage sequencing data using pangenome graphs. **Genome Biology** *In press*
+Bolognini, D. et al. (2026). COSIGT: population‑scalable genotyping of complex loci from low‑coverage sequencing data using pangenome graphs. **Genome Biol** 27, 286
 
 An initial application of the cosigt workflow is presented in [this](https://www.nature.com/articles/s41586-024-07911-1) manuscript:
 

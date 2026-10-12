@@ -39,7 +39,7 @@ The pipeline begins by aligning the assembled haplotypes (queries) to their corr
 Alignment is done in batches, one per assembly sample, and the resulting PAFs are concatenated and indexed per chromosome so that the liftover step can query them.
 
 ::: tip
-This whole stage is skipped when `allele_source: custom`, since the alleles for each region are then supplied directly and there is nothing to project. That is the cheapest way to genotype against a curated allele panel rather than a set of assemblies.
+This whole stage is skipped when `allele_source: custom`, since the alleles for each region are then supplied directly and there is nothing to project. That is the cheapest way to genotype against a curated allele panel rather than a set of assemblies. `allele_source: graph` skips graph construction as well, starting from a pre-built graph per region.
 :::
 
 ## Target region liftover

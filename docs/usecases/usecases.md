@@ -313,6 +313,24 @@ alleles: config/alleles.tsv
 
 This skips assembly alignment and liftover entirely, so it is much faster and useful when iterating on genotyping parameters against a fixed panel. The allele FASTA must be indexed and PanSN-named.
 
+### Genotyping from pre-built graphs
+
+One step further, cosigt can start from a graph per region instead of building one — for instance the graphs a previous run left in `cosigt_results/pggb`:
+
+```bash
+printf 'region\tgraph\n' > config/graphs.tsv
+printf 'chr6_31972057_32055418\t%s\n' \
+  "$PWD/cosigt_results/pggb/chr6/chr6_31972057_32055418/chr6_31972057_32055418.og" \
+  >> config/graphs.tsv
+```
+
+```yaml
+allele_source: graph
+graphs: config/graphs.tsv
+```
+
+This skips graph construction as well as alignment and liftover, so pggb never runs. The alleles are the graph's own paths, so the graph must contain the reference path named with `pansn_prefix`; see [→ Configuration](/configuration/configuration.html#graphs-tsv).
+
 ### Long reads and ancient DNA
 
 Only `read_mode` changes:

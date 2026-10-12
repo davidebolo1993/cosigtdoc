@@ -60,6 +60,25 @@ region              fasta
 chr1_103998686_104408600  /data/alleles/amy.fa.gz
 ```
 
+### graphs.tsv
+
+Used when `allele_source: graph`. Supplies a pre-built graph for each region — an odgi graph (`.og`) or an uncompressed GFA (`.gfa`) — used in place of the graph pggb would otherwise build. It is the `custom` source with a graph instead of a FASTA: assembly alignment, liftover and graph construction are all skipped.
+
+```txt
+region                    graph
+chr6_31972057_32055418    /data/graphs/c4.og
+```
+
+The graph's paths *are* the alleles. cosigt extracts them as the allele FASTA used to realign reads, written exactly as stored in the graph rather than reoriented, because the realigned reads are placed back onto that same graph by path name. Each graph is also re-sorted by its reference path, as cosigt does with any graph pggb builds, so both sources hand the rest of the workflow an identical layout.
+
+::: warning The reference path must be in the graph
+Every graph needs a path named with `pansn_prefix` — for example `grch38#1#chr6:31972057-32055418`. A graph pggb built through cosigt always has one; one built elsewhere may not. Without it the region fails on its first step with a message saying so. Paths should follow [PanSN](https://github.com/pangenome/PanSN-spec).
+:::
+
+::: tip GFA is fine, compressed GFA is not
+odgi reads a plain GFA directly, and cosigt stages every graph as `.og`, so the format makes no difference downstream. A gzipped GFA is rejected by `make check`: odgi mistakes it for a serialized graph and crashes rather than refusing it, so decompress it first.
+:::
+
 ### truth_graphs.tsv
 
 Only for `benchmark_mode: leave_all_out`. Maps each region to a pre-built odgi graph (`.og`) that contains the genotyped samples' own haplotypes. See [→ Benchmarking](/benchmarking/benchmarking.html).
@@ -72,9 +91,10 @@ reference: /path/to/reference.fa.gz
 samples: config/samples.tsv
 regions: config/regions.bed
 
-allele_source: assemblies      # or custom
+allele_source: assemblies      # assemblies | custom | graph
 assemblies: config/assemblies.tsv
 alleles: config/alleles.tsv
+graphs: config/graphs.tsv
 
 read_mode: short               # short | ancient | long:<preset>
 pansn_prefix: grch38#1#

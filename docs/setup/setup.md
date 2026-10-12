@@ -72,6 +72,7 @@ cosigt_smk/config/
 ├── regions.bed         # regions to genotype
 ├── assemblies.tsv      # chromosome -> assembly FASTA
 ├── alleles.tsv         # region -> allele FASTA   (allele_source: custom)
+├── graphs.tsv          # region -> .og or .gfa    (allele_source: graph)
 └── truth_graphs.tsv    # region -> truth graph    (benchmark_mode: leave_all_out)
 ```
 
